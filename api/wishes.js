@@ -1,56 +1,44 @@
 // API endpoint for handling wishes/messages
-import { promises as fs } from 'fs';
-import path from 'path';
+// Using in-memory storage for Vercel serverless environment
 
-const WISHES_FILE = path.join(process.cwd(), 'data', 'wishes.json');
-
-// Ensure data directory exists
-async function ensureDataDir() {
-  const dataDir = path.join(process.cwd(), 'data');
-  try {
-    await fs.access(dataDir);
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true });
+// In-memory storage (resets on each deployment)
+let wishesStore = [
+  {
+    id: 1,
+    name: "مروان مختار",
+    message: "بارك الله لكما وبارك عليكما وجمع بينكما في خير، وجعل أيامكما سعادةً ومودّة ورحمة.❤️🤍",
+    timestamp: "2025-10-05T20:30:00Z",
+    attending: "attending"
+  },
+  {
+    id: 2,
+    name: "فاطمة أحمد",
+    message: "ألف مبروك للعروسين الحبيبين! أسأل الله أن يبارك لكما ويجمع بينكما في خير وسعادة دائمة 💕✨",
+    timestamp: "2025-10-04T18:45:00Z",
+    attending: "attending"
+  },
+  {
+    id: 3,
+    name: "أحمد محمد",
+    message: "مبروك للعروسين! أتمنى لكما حياة مليئة بالحب والسعادة والأطفال الصالحين 🎉💖",
+    timestamp: "2025-10-03T15:20:00Z",
+    attending: "attending"
   }
-}
+];
 
-// Read wishes from file
+// Read wishes from memory
 async function readWishes() {
-  try {
-    await ensureDataDir();
-    const data = await fs.readFile(WISHES_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    // If file doesn't exist, return default wishes
-    return [
-      {
-        id: 1,
-        name: "مروان مختار",
-        message: "بارك الله لكما وبارك عليكما وجمع بينكما في خير، وجعل أيامكما سعادةً ومودّة ورحمة.❤️🤍",
-        timestamp: "2025-10-05T20:30:00Z",
-        attending: "attending"
-      },
-      {
-        id: 2,
-        name: "فاطمة أحمد",
-        message: "ألف مبروك للعروسين الحبيبين! أسأل الله أن يبارك لكما ويجمع بينكما في خير وسعادة دائمة 💕✨",
-        timestamp: "2025-10-04T18:45:00Z",
-        attending: "attending"
-      }
-    ];
-  }
+  return wishesStore;
 }
 
-// Write wishes to file
+// Write wishes to memory
 async function writeWishes(wishes) {
-  await ensureDataDir();
-  await fs.writeFile(WISHES_FILE, JSON.stringify(wishes, null, 2));
+  wishesStore = wishes;
 }
 
 // Validate wish data
 function validateWish(wish) {
   const errors = [];
-  
   if (!wish.name || wish.name.trim().length < 2) {
     errors.push('Name must be at least 2 characters long');
   }
@@ -74,11 +62,13 @@ function validateWish(wish) {
 }
 
 export default async function handler(req, res) {
-  // Enable CORS
+  // Enable CORS for all origins
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Max-Age', '86400');
   
+  // Handle preflight requests
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -95,17 +85,21 @@ export default async function handler(req, res) {
     
     if (req.method === 'POST') {
       // Add new wish
-      const { name, message, attending } = req.body;
+      console.log('Request body:', req.body); // Debug log
+      const { name, message, attending } = req.body || {};
       
       // Validate input
       const wishData = {
-        name: name?.trim() || '',
+        name: name?.trim() || 'ضيف كريم',
         message: message?.trim() || '',
         attending: attending || 'attending'
       };
       
+      console.log('Wish data:', wishData); // Debug log
+      
       const validationErrors = validateWish(wishData);
       if (validationErrors.length > 0) {
+        console.log('Validation errors:', validationErrors); // Debug log
         return res.status(400).json({
           success: false,
           errors: validationErrors
