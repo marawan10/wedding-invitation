@@ -1,17 +1,14 @@
 // API utility functions for wishes
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-site-name.vercel.app' // Replace with your actual Vercel URL
-  : 'http://localhost:3000';
+const API_BASE_URL = typeof window !== 'undefined' 
+  ? window.location.origin // Use current domain in browser
+  : 'https://wedding-invitation-khaki-nine.vercel.app'; // Fallback for server-side
 
 // Fetch all wishes
 export async function fetchWishes() {
   try {
     const response = await fetch(`${API_BASE_URL}/api/wishes`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
     });
     
     if (!response.ok) {
