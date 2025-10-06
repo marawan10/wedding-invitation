@@ -63,7 +63,7 @@ export default function Location() {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: index * 0.2 }}
                             viewport={{ once: true }}
-                            className="grid md:grid-cols-2 gap-8 items-center"
+                            className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
                         >
                             {/* Venue Details */}
                             <div className={`space-y-6 ${index % 2 === 1 ? 'md:order-2' : ''}`}>
@@ -117,34 +117,15 @@ export default function Location() {
                                 </div>
                             </div>
 
-                            {/* Map Container */}
-                            <div className={`${index % 2 === 1 ? 'md:order-1' : ''}`}>
+                            {/* Map Container - Hidden on mobile, visible on desktop */}
+                            <div className={`hidden md:block ${index % 2 === 1 ? 'md:order-1' : ''}`}>
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     whileInView={{ opacity: 1, scale: 1 }}
                                     transition={{ duration: 0.8, delay: 0.2 }}
                                     viewport={{ once: true }}
-                                    className="w-full h-[400px] rounded-2xl overflow-hidden shadow-lg border-8 border-white relative bg-gray-100"
+                                    className="w-full h-[400px] rounded-2xl overflow-hidden shadow-lg border-8 border-white"
                                 >
-                                    {/* Fallback content */}
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-rose-50 to-pink-50 text-center p-6">
-                                        <MapPin className="w-16 h-16 text-rose-400 mb-4" />
-                                        <h4 className="text-lg font-semibold text-gray-800 mb-2">{event.location}</h4>
-                                        <p className="text-gray-600 text-sm mb-4">{event.address}</p>
-                                        <motion.a
-                                            href={event.maps_url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            whileHover={{ scale: 1.05 }}
-                                            whileTap={{ scale: 0.95 }}
-                                            className="bg-rose-500 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-rose-600 transition-colors flex items-center gap-2"
-                                        >
-                                            <ExternalLink className="w-4 h-4" />
-                                            فتح في خرائط جوجل
-                                        </motion.a>
-                                    </div>
-                                    
-                                    {/* Try to load iframe, but fallback will show if it fails */}
                                     <iframe
                                         src={event.maps_embed}
                                         width="100%"
@@ -153,18 +134,7 @@ export default function Location() {
                                         allowFullScreen=""
                                         loading="lazy"
                                         referrerPolicy="no-referrer-when-downgrade"
-                                        className="w-full h-full relative z-10"
-                                        onLoad={(e) => {
-                                            // Hide fallback when iframe loads successfully
-                                            const fallback = e.target.previousElementSibling;
-                                            if (fallback) fallback.style.display = 'none';
-                                        }}
-                                        onError={(e) => {
-                                            // Show fallback when iframe fails
-                                            const fallback = e.target.previousElementSibling;
-                                            if (fallback) fallback.style.display = 'flex';
-                                            e.target.style.display = 'none';
-                                        }}
+                                        className="w-full h-full"
                                     ></iframe>
                                 </motion.div>
                             </div>
