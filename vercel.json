@@ -1,24 +1,9 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    },
-    {
-      "src": "api/wishes.js",
-      "use": "@vercel/node"
+  "functions": {
+    "api/wishes.js": {
+      "memory": 1024
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/wishes"
-    }
-  ],
+  },
   "headers": [
     {
       "source": "/api/(.*)",
