@@ -175,7 +175,7 @@ export async function submitWish(wishData) {
 // Get all messages (including those not shown by default)
 export async function getAllWishes() {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/wishes/all`);
+    const response = await fetch(`${API_BASE_URL}/api/wishes`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
