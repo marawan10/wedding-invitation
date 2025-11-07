@@ -46,6 +46,14 @@ export default function Hero() {
                     minutes: Math.floor((difference / 1000 / 60) % 60),
                     seconds: Math.floor((difference / 1000) % 60),
                 };
+            } else {
+                // When the target time has passed, show zeros for all units.
+                timeLeft = {
+                    days: '00',
+                    hours: '00',
+                    minutes: '00',
+                    seconds: '00'
+                };
             }
             return timeLeft;
         }
