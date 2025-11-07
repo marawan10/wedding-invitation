@@ -304,7 +304,7 @@ export default function Wishes() {
                         /* Scrolling Wishes using Marquee (original component) */
                         <div className="w-full mx-auto space-y-6 mb-12">
                             {/* Use `duration` (seconds) for clearer control — larger = slower. */}
-                            <Marquee pauseOnHover className="w-full py-5" duration={80} direction="left" repeat={3}>
+                            <Marquee pauseOnHover className="w-full py-5" duration={120} direction="left" repeat={3}>
                                 {filteredWishes.map((wish, index) => (
                                 <motion.div
                                     key={wish.id}
