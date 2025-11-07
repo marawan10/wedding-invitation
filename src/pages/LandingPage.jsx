@@ -12,13 +12,20 @@ const LandingPage = ({ onOpenInvitation }) => {
   function calculateTimeLeft() {
     const difference = +new Date(config.data.date) - +new Date();
     let timeLeft = {};
-
     if (difference > 0) {
       timeLeft = {
         days: Math.floor(difference / (1000 * 60 * 60 * 24)),
         hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((difference / 1000 / 60) % 60),
         seconds: Math.floor((difference / 1000) % 60),
+      };
+    } else {
+      // When the target time has passed or reached, show all zeros.
+      timeLeft = {
+        days: '00',
+        hours: '00',
+        minutes: '00',
+        seconds: '00'
       };
     }
     return timeLeft;
